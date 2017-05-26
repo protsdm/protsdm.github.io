@@ -1,0 +1,166 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../show-app/show-app.html"></head><body>
+<dom-module id="my-purchases">
+  <template>
+    <style>
+    .wrapper {
+      padding-top: 10px;
+      height:100%;
+      overflow: auto;
+    }
+    .fixed-button {
+      position: fixed;
+      bottom: 10px;
+      right:10px;
+    }
+      :host {
+        display: block;
+      }
+    </style>
+    <div class="wrapper">
+      <template is="dom-repeat" id="purchaseItem" items="{{items}}" observe="items categories">
+        <purchase-item item="{{item}}" category="{{getCategory(item)}}" types="{{types}}"></purchase-item>
+      </template>
+    </div>
+    <div class="fixed-button">
+      <paper-fab icon="add-box" id="add"></paper-fab>
+    </div>
+    <paper-dialog id="pchDialog" style="overflow-y:auto">
+      <h2>Описание покупки</h2>
+      <paper-input label="Название" value="{{model.title}}"></paper-input>
+      <paper-input label="Количество" value="{{model.count}}"></paper-input>
+      <paper-dropdown-menu id="menu" label="Единицы">
+				<paper-menu class="dropdown-content" selected="{{model.type}}">
+					<template is="dom-repeat" items="{{types}}">
+						<paper-item>{{item.value}}</paper-item>
+					</template>
+				</paper-menu>
+			</paper-dropdown-menu>
+      <paper-input label="Цена" value="{{model.price}}"></paper-input>
+      <paper-dropdown-menu id="dropdown" label="Категория">
+        <paper-menu class="dropdown-content" selected="{{model.ctgIndex}}">
+            <template is="dom-repeat" items="{{options}}">
+              <paper-item value="{{item.id}}">{{item.title}}</paper-item>
+            </template>
+        </paper-menu>
+      </paper-dropdown-menu>
+      <paper-input value="{{model.comment}}" label="Комментарий"></paper-input>
+      <div class="">
+        <paper-button id="okButton">Ок</paper-button>
+        <paper-button id="backButton">Назад</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: "my-purchases",
+      properties: {
+        items: Array,
+        categories: {
+          type: Object
+        },
+        types: {
+          type: Array,
+          value() {
+            return [{value:'шт'},{value:'г'},{value:'л'}];
+          }
+        },
+        options: Array,
+        model: {
+          type: Object,
+          value() {
+            return {
+              id: null,
+              title: "",
+              category: "",
+              ctgIndex: 0,
+              marked: false,
+              count: "",
+              price: "",
+              type: 0,
+              comment: ""
+              }
+            }
+          }
+        },
+        listeners: {
+          "add.tap":"addItem",
+          "okButton.tap": "saveItem",
+          "backButton.tap": "closeDialog",
+          "changePurchase": "changePurchase"
+        },
+        alertMe() {
+          alert("OLOLOLO");
+          console.log("CYKA BLEAT");
+        },
+        guid() {
+  			  function s4() {
+  				return Math.floor((1 + Math.random()) * 0x10000)
+  				  .toString(16)
+  				  .substring(1);
+  			  }
+  			  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+  				s4() + '-' + s4() + s4() + s4();
+  			},
+        addItem() {
+          let model = {
+            id: null,
+            title: "",
+            category: "",
+            ctgIndex: 0,
+            marked: false,
+            count: 0,
+            price:"",
+            type: 0,
+            comment: ""
+          }
+          this.set("model", model);
+          this.$.pchDialog.open();
+        },
+        saveItem() {
+          let m = this.model;
+          let newPurchase = {
+            id:m.id || this.guid(),
+  					marked:m.marked,
+  					title:m.title,
+  					count:m.count,
+  					type:m.type,
+            price:m.price,
+  					comment:m.comment,
+          }
+          if (m.ctgIndex != null) {
+            newPurchase.category = this.options[m.ctgIndex].id;
+          }
+          else {
+            newPurchase.category = null;
+          }
+          this.fire("updatePurchase", newPurchase);
+          this.$.pchDialog.close();
+        },
+        closeDialog() {
+          this.$.pchDialog.close();
+        },
+        changePurchase(item) {
+          let model = Object.assign({}, item.detail);
+          if (!model.category) {
+            model.ctgIndex = 0;
+          }
+          else {
+            for (let i=0; i < this.options.length; i++) {
+              if (this.options[i].id == model.category) {
+                model.ctgIndex = i;
+                break;
+              }
+            }
+          }
+          this.set("model", model);
+          this.$.pchDialog.open();
+        },
+        getCategory(item) {
+          if (!item.category) return null;
+          return this.categories[item.category];
+        }
+    });
+  </script>
+</dom-module>
+
+</body></html>

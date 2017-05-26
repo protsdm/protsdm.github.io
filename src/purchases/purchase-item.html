@@ -1,0 +1,123 @@
+<html><head><link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+</head><body>
+<dom-module id="purchase-item">
+  <template>
+
+    <div class="flex row border">
+      <div class="stretch flex col" style$="{{textDec}}" id="text">
+        <div class="fixed header">{{item.title}}</div>
+        <template is="dom-if" if="{{category.title}}">
+          <div class="fixed text">
+            <i>Категория </i>{{category.title}}
+          </div>
+        </template>
+        <template is="dom-if" if="{{item.count}}">
+          <div class="fixed text">
+            <i>Количество </i>{{getCount(item)}}
+          </div>
+        </template>
+        <template is="dom-if" if="{{item.comment}}">
+          <div class="fixed text">
+            <i>Комментарий </i>{{item.comment}}
+          </div>
+        </template>
+        <template is="dom-if" if="{{item.price}}">
+          <div class="fixed text">
+            <i>Цена </i>{{item.price}}
+          </div>
+        </template>
+      </div>
+
+      <div class="fixed flex center row">
+        <paper-icon-button icon="create" id="change"></paper-icon-button>
+        <paper-icon-button icon="delete" id="remove"></paper-icon-button>
+      </div>
+    </div>
+
+    <style>
+  		.flex{
+  			display:flex;
+  		}
+  		.flex.row{
+  			flex-flow:row;
+  		}
+  		.flex.col{
+  			flex-flow:column;
+
+  		}
+  		.stretch{
+  			flex:1 1 auto;
+  		}
+  		.fixed{
+  			flex:0 0 auto;
+  		}
+  		.header{
+  			font-size:1.2em;
+  		}
+  		.center{
+  			align-items:center;
+  			justify-content:center;
+  		}
+  		.text{
+  			font-size:1em;
+  			color:rgba(0,0,0,0.7);
+  		}
+  		.header,.text{
+  			margin-left:12px;
+  			margin-top:12px;
+  			margin-right;
+  		}
+  		.text{
+  			margin-bottom:12px;
+  		}
+  		.line-through{
+  			text-decoration:line-through;
+  		}
+  		.border{
+  			border-bottom: 1px solid rgba(0,0,0,0.1);
+  		}
+  		.bold{
+  			font-weight: bold;
+  		}
+  	</style>
+  </template>
+  <script>
+    Polymer({
+      is: 'purchase-item',
+      properties: {
+        item: Object,
+        category: Object,
+        types: Object,
+        textDec: {
+          type: String,
+          computed:'_textDec(item.marked)'
+        }
+      },
+      listeners: {
+        "change.tap": "changeItem",
+        "remove.tap": "deleteItem",
+        "text.tap": "markItem"
+      },
+      changeItem() {
+        this.fire("changePurchase", this.item);
+      },
+      deleteItem() {
+        this.fire("deletePurchase", this.item);
+      },
+      markItem() {
+        this.set("item.marked", !this.item.marked);
+        this.fire("updatePurchase", this.item);
+      },
+      _textDec(marked) {
+        if (!marked) return "";
+        return "text-decoration:line-through;opacity:0.5;";
+      },
+      getCount(item) {
+        return item.count + " " + this.types[item.type].value;
+      }
+    });
+  </script>
+</dom-module>
+
+</body></html>

@@ -1,0 +1,54 @@
+<html><head><link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+</head><body>
+<dom-module id="category-item">
+  <template>
+
+    <div class="flex border">
+      <div class="stretch text">{{item.title}}</div>
+      <div class="fixed">
+        <paper-icon-button icon="create" id="rename"></paper-icon-button>
+        <paper-icon-button icon="delete" id="remove"></paper-icon-button>
+      </div>
+    </div>
+    <style>
+			.flex{
+				display:flex;
+				flex-flow:row;
+			}
+			.stretch{
+				flex: 1 1 auto;
+			}
+			.fixed{
+				flex: 0 0 auto;
+			}
+			.text{
+				font-size:1.2em;
+				margin:12px;
+			}
+			.border{
+				border-bottom:1px solid rgba(0,0,0,0.1);
+			}
+
+		</style>
+  </template>
+  <script>
+    Polymer({
+      is: 'category-item',
+      properties:{
+        item:Object
+      },
+      listeners:{
+        "rename.tap":"renameCategory",
+        "remove.tap":"removeCategory"
+      },
+      renameCategory(){
+        this.fire("ctgRename", this.item);
+      },
+      removeCategory(){
+        this.fire("deleteCategory", this.item);
+      }
+    });
+  </script>
+</dom-module>
+
+</body></html>

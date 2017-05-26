@@ -1,0 +1,93 @@
+<html><head><meta charset="UTF-8"><link rel="import" href="../show-app/show-app.html"></head><body>
+<dom-module id="my-categories">
+  <template>
+  <style>
+    .wrapper {
+      overflow: auto;
+      height: 100%;
+      padding-top: 10px;
+    }
+
+    .fixed-button {
+      position: fixed;
+      right: 10px;
+      bottom: 10px;
+    }
+  </style>
+    <div class="wrapper">
+      <template is="dom-repeat" items="{{items}}" index-as="index">
+        <category-item item="{{item}}"></category-item>
+      </template>
+    </div>
+
+  <div class="fixed-button">
+    <paper-fab icon="add-box" id="addCategory"></paper-fab>
+  </div>
+
+  <paper-dialog id="ctgDialog" style="overflow-y:auto">
+    <h2>Описание категории</h2>
+    <paper-input label="Название" value="{{model.title}}"></paper-input>
+    <div class="">
+      <paper-button id="okButton">Ок</paper-button>
+      <paper-button id="backButton">Назад</paper-button>
+    </div>
+  </paper-dialog>
+
+
+</template>
+  <script>
+    Polymer({
+      is: "my-categories",
+      properties: {
+        items: Array,
+        model: {
+          type: Object,
+          value(){
+            return {
+              id:null,
+              title:""
+              }
+            }
+          }
+        },
+        listeners: {
+          "addCategory.tap": "ctgAdd",
+          "okButton.tap": "ctgSave",
+          "backButton.tap": "closeDialog",
+          "ctgRename": "ctgRename",
+        },
+        ctgAdd() {
+          this.model.id=null;
+          this.$.ctgDialog.open();
+        },
+        ctgSave() {
+          let item = Object.assign({}, this.model);
+          if (!item.id) {
+            item.id = this.guid();
+          }
+          this.fire("updateCategory", item);
+          this.$.ctgDialog.close();
+        },
+        closeDialog() {
+          this.$.ctgDialog.close();
+        },
+        ctgRename(item) {
+          let model = Object.assign({},item.detail);
+
+          this.set("model", model);
+          this.$.ctgDialog.open();
+        },
+        guid() {
+  			  function s4() {
+  				return Math.floor((1 + Math.random()) * 0x10000)
+  				  .toString(16)
+  				  .substring(1);
+  			  }
+  			  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+  				s4() + '-' + s4() + s4() + s4();
+  			}
+    });
+  </script>
+</dom-module>
+
+</body></html>

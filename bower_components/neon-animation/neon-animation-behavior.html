@@ -1,0 +1,5 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-meta/iron-meta.html">
+
+<script>Polymer.NeonAnimationBehavior={properties:{animationTiming:{type:Object,value:function(){return{duration:500,easing:"cubic-bezier(0.4, 0, 0.2, 1)",fill:"both"}}}},isNeonAnimation:!0,created:function(){document.body.animate||console.warn("No web animations detected. This element will not function without a web animations polyfill.")},timingFromConfig:function(i){if(i.timing)for(var n in i.timing)this.animationTiming[n]=i.timing[n];return this.animationTiming},setPrefixedProperty:function(i,n,t){for(var o,e={transform:["webkitTransform"],transformOrigin:["mozTransformOrigin","webkitTransformOrigin"]},r=e[n],a=0;o=r[a];a++)i.style[o]=t;i.style[n]=t},complete:function(){}};</script>
+</head><body></body></html>
